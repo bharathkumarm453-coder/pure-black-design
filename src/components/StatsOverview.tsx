@@ -24,7 +24,7 @@ function StatCard({ label, value, icon, type = 'neutral', delay = 0 }: StatCardP
         <span className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">{label}</span>
         <span className="text-muted-foreground/40">{icon}</span>
       </div>
-      <p className={`text-[28px] font-semibold tracking-tight font-mono leading-none ${valueColor}`}>{value}</p>
+      <p className={`text-[28px] font-semibold tracking-tight leading-none tabular-nums ${valueColor}`}>{value}</p>
     </motion.div>
   );
 }
