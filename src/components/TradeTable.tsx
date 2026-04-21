@@ -146,7 +146,8 @@ export default function TradeTable({ trades, onDelete, onEdit }: TradeTableProps
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ delay: i * 0.02, ease: [0.16, 1, 0.3, 1] }}
-                      className="border-b border-border/40 hover:bg-muted/40 transition-colors duration-300 group"
+                      onClick={() => setDetailTrade(trade)}
+                      className="border-b border-border/40 hover:bg-muted/40 transition-colors duration-300 group cursor-pointer"
                     >
                       <td className="px-5 py-4 font-mono text-xs text-muted-foreground">{trade.exitDate}</td>
                       <td className="px-5 py-4 font-semibold tracking-tight">{trade.symbol}</td>
@@ -169,10 +170,10 @@ export default function TradeTable({ trades, onDelete, onEdit }: TradeTableProps
                         {rr !== null ? `${rr.toFixed(1)}R` : '—'}
                       </td>
                       <td className="px-5 py-4 text-xs text-muted-foreground">{trade.setup}</td>
-                      <td className="px-5 py-4">
+                      <td className="px-5 py-4" onClick={(e) => e.stopPropagation()}>
                         <ImageThumbnail images={images} onClick={() => setGalleryTrade(trade)} />
                       </td>
-                      <td className="px-5 py-4">
+                      <td className="px-5 py-4" onClick={(e) => e.stopPropagation()}>
                         <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                           <button onClick={() => onEdit(trade)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-all duration-200">
                             <Edit2 size={13} />
@@ -192,6 +193,7 @@ export default function TradeTable({ trades, onDelete, onEdit }: TradeTableProps
       </motion.div>
 
       <ImageGallery images={galleryTrade?.images || []} open={!!galleryTrade} onClose={() => setGalleryTrade(null)} symbol={galleryTrade?.symbol} />
+      <TradeDetailDrawer trade={detailTrade} onClose={() => setDetailTrade(null)} onEdit={onEdit} onDelete={onDelete} />
     </>
   );
 }
