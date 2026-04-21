@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trash2, Edit2, TrendingUp, TrendingDown, BarChart, ChevronRight } from "lucide-react";
+import { Trash2, Edit2, TrendingUp, TrendingDown, BarChart } from "lucide-react";
 import { Trade, getPnL, getRiskReward } from "@/lib/trades";
 import ImageGallery, { ImageThumbnail } from "@/components/ImageGallery";
+import TradeDetailDrawer from "@/components/TradeDetailDrawer";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface TradeTableProps {
@@ -84,6 +85,7 @@ function TradeCard({ trade, onDelete, onEdit, onImageClick, index }: { trade: Tr
 export default function TradeTable({ trades, onDelete, onEdit }: TradeTableProps) {
   const sorted = [...trades].sort((a, b) => b.exitDate.localeCompare(a.exitDate));
   const [galleryTrade, setGalleryTrade] = useState<Trade | null>(null);
+  const [detailTrade, setDetailTrade] = useState<Trade | null>(null);
   const isMobile = useIsMobile();
 
   if (trades.length === 0) {
@@ -101,17 +103,19 @@ export default function TradeTable({ trades, onDelete, onEdit }: TradeTableProps
       <>
         <div className="space-y-2.5">
           {sorted.map((trade, i) => (
-            <TradeCard
-              key={trade.id}
-              trade={trade}
-              index={i}
-              onDelete={() => onDelete(trade.id)}
-              onEdit={() => onEdit(trade)}
-              onImageClick={() => setGalleryTrade(trade)}
-            />
+            <div key={trade.id} onClick={() => setDetailTrade(trade)} className="cursor-pointer">
+              <TradeCard
+                trade={trade}
+                index={i}
+                onDelete={() => onDelete(trade.id)}
+                onEdit={() => onEdit(trade)}
+                onImageClick={() => setGalleryTrade(trade)}
+              />
+            </div>
           ))}
         </div>
         <ImageGallery images={galleryTrade?.images || []} open={!!galleryTrade} onClose={() => setGalleryTrade(null)} symbol={galleryTrade?.symbol} />
+        <TradeDetailDrawer trade={detailTrade} onClose={() => setDetailTrade(null)} onEdit={onEdit} onDelete={onDelete} />
       </>
     );
   }
