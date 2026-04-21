@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Trash2, Edit2, TrendingUp, TrendingDown, BarChart, ChevronRight } from "lucide-react";
+import { Trash2, Edit2, TrendingUp, TrendingDown, BarChart } from "lucide-react";
 import { Trade, getPnL, getRiskReward } from "@/lib/trades";
 import ImageGallery, { ImageThumbnail } from "@/components/ImageGallery";
+import TradeDetailDrawer from "@/components/TradeDetailDrawer";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface TradeTableProps {
@@ -84,6 +85,7 @@ function TradeCard({ trade, onDelete, onEdit, onImageClick, index }: { trade: Tr
 export default function TradeTable({ trades, onDelete, onEdit }: TradeTableProps) {
   const sorted = [...trades].sort((a, b) => b.exitDate.localeCompare(a.exitDate));
   const [galleryTrade, setGalleryTrade] = useState<Trade | null>(null);
+  const [detailTrade, setDetailTrade] = useState<Trade | null>(null);
   const isMobile = useIsMobile();
 
   if (trades.length === 0) {
@@ -101,17 +103,19 @@ export default function TradeTable({ trades, onDelete, onEdit }: TradeTableProps
       <>
         <div className="space-y-2.5">
           {sorted.map((trade, i) => (
-            <TradeCard
-              key={trade.id}
-              trade={trade}
-              index={i}
-              onDelete={() => onDelete(trade.id)}
-              onEdit={() => onEdit(trade)}
-              onImageClick={() => setGalleryTrade(trade)}
-            />
+            <div key={trade.id} onClick={() => setDetailTrade(trade)} className="cursor-pointer">
+              <TradeCard
+                trade={trade}
+                index={i}
+                onDelete={() => onDelete(trade.id)}
+                onEdit={() => onEdit(trade)}
+                onImageClick={() => setGalleryTrade(trade)}
+              />
+            </div>
           ))}
         </div>
         <ImageGallery images={galleryTrade?.images || []} open={!!galleryTrade} onClose={() => setGalleryTrade(null)} symbol={galleryTrade?.symbol} />
+        <TradeDetailDrawer trade={detailTrade} onClose={() => setDetailTrade(null)} onEdit={onEdit} onDelete={onDelete} />
       </>
     );
   }
@@ -142,7 +146,8 @@ export default function TradeTable({ trades, onDelete, onEdit }: TradeTableProps
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ delay: i * 0.02, ease: [0.16, 1, 0.3, 1] }}
-                      className="border-b border-border/40 hover:bg-muted/40 transition-colors duration-300 group"
+                      onClick={() => setDetailTrade(trade)}
+                      className="border-b border-border/40 hover:bg-muted/40 transition-colors duration-300 group cursor-pointer"
                     >
                       <td className="px-5 py-4 font-mono text-xs text-muted-foreground">{trade.exitDate}</td>
                       <td className="px-5 py-4 font-semibold tracking-tight">{trade.symbol}</td>
@@ -165,10 +170,10 @@ export default function TradeTable({ trades, onDelete, onEdit }: TradeTableProps
                         {rr !== null ? `${rr.toFixed(1)}R` : '—'}
                       </td>
                       <td className="px-5 py-4 text-xs text-muted-foreground">{trade.setup}</td>
-                      <td className="px-5 py-4">
+                      <td className="px-5 py-4" onClick={(e) => e.stopPropagation()}>
                         <ImageThumbnail images={images} onClick={() => setGalleryTrade(trade)} />
                       </td>
-                      <td className="px-5 py-4">
+                      <td className="px-5 py-4" onClick={(e) => e.stopPropagation()}>
                         <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                           <button onClick={() => onEdit(trade)} className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-all duration-200">
                             <Edit2 size={13} />
@@ -188,6 +193,7 @@ export default function TradeTable({ trades, onDelete, onEdit }: TradeTableProps
       </motion.div>
 
       <ImageGallery images={galleryTrade?.images || []} open={!!galleryTrade} onClose={() => setGalleryTrade(null)} symbol={galleryTrade?.symbol} />
+      <TradeDetailDrawer trade={detailTrade} onClose={() => setDetailTrade(null)} onEdit={onEdit} onDelete={onDelete} />
     </>
   );
 }

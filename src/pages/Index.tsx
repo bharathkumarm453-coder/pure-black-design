@@ -6,6 +6,7 @@ import { Trade, getTrades, saveTrades, addTrade, deleteTrade, updateTrade, calcu
 import StatsOverview from "@/components/StatsOverview";
 import TradeTable from "@/components/TradeTable";
 import EquityCurve from "@/components/EquityCurve";
+import DrawdownChart from "@/components/DrawdownChart";
 import AddTradeModal from "@/components/AddTradeModal";
 import CalendarHeatMap from "@/components/CalendarHeatMap";
 import PerformanceBreakdown from "@/components/PerformanceBreakdown";
@@ -184,6 +185,7 @@ export default function Index() {
             <div className="space-y-4 md:space-y-6">
               <StatsOverview stats={stats} />
               <EquityCurve trades={trades} />
+              <DrawdownChart trades={trades} />
               <div>
                 <h2 className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-3">Recent Trades</h2>
                 <TradeTable trades={trades.slice(-10)} onDelete={handleDelete} onEdit={handleEdit} />
@@ -205,6 +207,7 @@ export default function Index() {
             <div className="space-y-4 md:space-y-6">
               <StatsOverview stats={stats} />
               <EquityCurve trades={trades} />
+              <DrawdownChart trades={trades} />
               <div className="grid grid-cols-2 md:grid-cols-5 gap-2 md:gap-3">
                 {(() => {
                   const rrs = trades.map(getRiskReward).filter((r): r is number => r !== null);
@@ -219,7 +222,7 @@ export default function Index() {
                 })().map((s, i) => (
                   <motion.div key={s.label} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 + i * 0.04, ease: [0.16, 1, 0.3, 1] }} className="surface-card p-3 md:p-5">
                     <p className="text-[10px] md:text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-1.5 md:mb-2">{s.label}</p>
-                    <p className={`text-lg md:text-2xl font-semibold font-mono tracking-tight ${s.type === 'profit' ? 'text-profit' : 'text-loss'}`}>{s.value}</p>
+                    <p className={`text-lg md:text-2xl font-semibold tracking-tight tabular-nums ${s.type === 'profit' ? 'text-profit' : 'text-loss'}`}>{s.value}</p>
                   </motion.div>
                 ))}
               </div>

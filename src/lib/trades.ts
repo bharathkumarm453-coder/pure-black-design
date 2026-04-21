@@ -163,3 +163,27 @@ export function getCumulativePnL(trades: Trade[]): { date: string; pnl: number; 
     return { date: t.exitDate, pnl, cumulative };
   });
 }
+
+export function getDrawdownSeries(trades: Trade[]): { date: string; cumulative: number; peak: number; drawdown: number }[] {
+  const series = getCumulativePnL(trades);
+  let peak = 0;
+  return series.map(point => {
+    peak = Math.max(peak, point.cumulative);
+    const drawdown = point.cumulative - peak; // <= 0
+    return { date: point.date, cumulative: point.cumulative, peak, drawdown };
+  });
+}
+
+export function getMaxDrawdown(trades: Trade[]): { maxDrawdown: number; maxDrawdownPct: number } {
+  const series = getDrawdownSeries(trades);
+  if (series.length === 0) return { maxDrawdown: 0, maxDrawdownPct: 0 };
+  let maxDD = 0;
+  let maxDDPct = 0;
+  for (const s of series) {
+    if (s.drawdown < maxDD) {
+      maxDD = s.drawdown;
+      maxDDPct = s.peak > 0 ? (s.drawdown / s.peak) * 100 : 0;
+    }
+  }
+  return { maxDrawdown: maxDD, maxDrawdownPct: maxDDPct };
+}
