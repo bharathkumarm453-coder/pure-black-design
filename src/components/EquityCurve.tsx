@@ -44,9 +44,9 @@ export default function EquityCurve({ trades }: { trades: Trade[] }) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...springTransition, delay: 0.05 }} className="lg:col-span-2 surface-card p-6">
-        <h3 className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-5">Equity Curve</h3>
-        <ResponsiveContainer width="100%" height={240}>
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...springTransition, delay: 0.05 }} className="lg:col-span-2 surface-card p-4 md:p-6">
+        <h3 className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-3 md:mb-5">Equity Curve</h3>
+        <ResponsiveContainer width="100%" height={200} className="md:!h-[240px]">
           <AreaChart data={data}>
             <defs>
               <linearGradient id="equityGrad" x1="0" y1="0" x2="0" y2="1">
@@ -62,9 +62,9 @@ export default function EquityCurve({ trades }: { trades: Trade[] }) {
         </ResponsiveContainer>
       </motion.div>
 
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...springTransition, delay: 0.1 }} className="surface-card p-6 flex flex-col items-center justify-center">
-        <h3 className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-5 self-start">Win / Loss</h3>
-        <ResponsiveContainer width="100%" height={160}>
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...springTransition, delay: 0.1 }} className="surface-card p-4 md:p-6 flex flex-col items-center justify-center">
+        <h3 className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-3 md:mb-5 self-start">Win / Loss</h3>
+        <ResponsiveContainer width="100%" height={140} className="md:!h-[160px]">
           <PieChart>
             <Pie data={pieData} cx="50%" cy="50%" innerRadius={48} outerRadius={64} dataKey="value" strokeWidth={0}>
               {pieData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
@@ -77,9 +77,9 @@ export default function EquityCurve({ trades }: { trades: Trade[] }) {
         </div>
       </motion.div>
 
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...springTransition, delay: 0.15 }} className="lg:col-span-2 surface-card p-6">
-        <h3 className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-5">Daily P&L</h3>
-        <ResponsiveContainer width="100%" height={200}>
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...springTransition, delay: 0.15 }} className="lg:col-span-2 surface-card p-4 md:p-6">
+        <h3 className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-3 md:mb-5">Daily P&L</h3>
+        <ResponsiveContainer width="100%" height={180} className="md:!h-[200px]">
           <BarChart data={dailyPnL}>
             <XAxis dataKey="date" tick={{ fontSize: 10, fill: 'hsl(0, 0%, 46%)' }} tickLine={false} axisLine={false} />
             <YAxis tick={{ fontSize: 10, fill: 'hsl(0, 0%, 46%)' }} tickLine={false} axisLine={false} tickFormatter={v => `$${v}`} />
@@ -91,8 +91,8 @@ export default function EquityCurve({ trades }: { trades: Trade[] }) {
         </ResponsiveContainer>
       </motion.div>
 
-      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...springTransition, delay: 0.2 }} className="surface-card p-6">
-        <h3 className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-5">Setup Performance</h3>
+      <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ ...springTransition, delay: 0.2 }} className="surface-card p-4 md:p-6">
+        <h3 className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-3 md:mb-5">Setup Performance</h3>
         <div className="space-y-4">
           {Object.entries(setupStats).map(([setup, data]) => {
             const total = data.wins + data.losses;

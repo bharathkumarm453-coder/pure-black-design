@@ -241,13 +241,20 @@ export default function Index() {
       {/* Mobile bottom tab bar */}
       {isMobile && (
         <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border/60 bg-background/90 backdrop-blur-xl safe-area-bottom">
-          <div className="flex items-center justify-around h-16 px-2">
+          <div className="flex items-center justify-around h-16 px-2 pb-[env(safe-area-inset-bottom,0px)]">
             {tabs.map(t => (
               <button
                 key={t.id}
                 onClick={() => setTab(t.id)}
-                className="flex flex-col items-center gap-1 flex-1 py-1"
+                className="relative flex flex-col items-center gap-1 flex-1 py-1 active:scale-95 transition-transform"
               >
+                {tab === t.id && (
+                  <motion.div
+                    layoutId="bottomTabIndicator"
+                    className="absolute -top-px w-10 h-0.5 rounded-full bg-foreground"
+                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  />
+                )}
                 <motion.div
                   animate={{
                     scale: tab === t.id ? 1 : 0.9,
@@ -262,13 +269,6 @@ export default function Index() {
                 }`}>
                   {t.label}
                 </span>
-                {tab === t.id && (
-                  <motion.div
-                    layoutId="bottomTabIndicator"
-                    className="absolute top-0 w-8 h-0.5 rounded-full bg-foreground"
-                    transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                  />
-                )}
               </button>
             ))}
           </div>
