@@ -40,6 +40,23 @@ function ThemeToggle() {
   );
 }
 
+function ThemeToggleRow() {
+  const { theme, setTheme } = useTheme();
+  const isDark = theme === 'dark';
+  return (
+    <button
+      onClick={() => setTheme(isDark ? 'light' : 'dark')}
+      className="flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl text-sm text-foreground hover:bg-muted/60 transition-all w-full"
+    >
+      <span className="flex items-center gap-3">
+        {isDark ? <Moon size={18} className="text-muted-foreground" /> : <Sun size={18} className="text-muted-foreground" />}
+        {isDark ? 'Dark Mode' : 'Light Mode'}
+      </span>
+      <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-muted text-muted-foreground">{isDark ? 'On' : 'Off'}</span>
+    </button>
+  );
+}
+
 export default function Index() {
   const [trades, setTrades] = useState<Trade[]>(getTrades);
   const [tab, setTab] = useState<Tab>('dashboard');
@@ -101,29 +118,33 @@ export default function Index() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 h-14 md:h-16 flex items-center justify-between gap-3">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 h-14 md:h-16 flex items-center justify-between gap-2 md:gap-3">
           {/* Brand */}
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-7 h-7 rounded-lg bg-foreground flex items-center justify-center shrink-0">
-              <Activity size={13} className="text-background" />
-            </div>
+          <div className="flex items-center gap-2.5 min-w-0 flex-1 md:flex-initial">
+            <button
+              onClick={() => isMobile && setTab('dashboard')}
+              className="w-8 h-8 rounded-lg bg-foreground flex items-center justify-center shrink-0 active:scale-95 transition-transform"
+              aria-label="Home"
+            >
+              <Activity size={14} className="text-background" />
+            </button>
             {!isMobile ? (
               <h1 className="text-[15px] font-semibold tracking-tight">TradeVault</h1>
             ) : (
-              <div className="flex items-baseline gap-2 min-w-0">
-                <h1 className="text-[15px] font-semibold tracking-tight">TradeVault</h1>
+              <div className="min-w-0 flex-1">
                 <AnimatePresence mode="wait">
-                  <motion.span
+                  <motion.h1
                     key={currentTabLabel}
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.2 }}
-                    className="text-[12px] text-muted-foreground truncate"
+                    transition={{ duration: 0.18 }}
+                    className="text-[16px] font-semibold tracking-tight truncate leading-tight"
                   >
-                    · {currentTabLabel}
-                  </motion.span>
+                    {currentTabLabel}
+                  </motion.h1>
                 </AnimatePresence>
+                <p className="text-[10px] text-muted-foreground/70 leading-tight">TradeVault</p>
               </div>
             )}
           </div>
@@ -165,12 +186,19 @@ export default function Index() {
 
           {/* Mobile actions */}
           {isMobile && (
-            <div className="flex items-center gap-1 shrink-0">
-              <ThemeToggle />
+            <div className="flex items-center gap-1.5 shrink-0">
               <input ref={fileRef} type="file" accept=".csv" className="hidden" onChange={handleImport} />
+              <button
+                onClick={() => { setEditTrade(null); setModalOpen(true); }}
+                className="h-9 px-3.5 rounded-xl bg-foreground text-background flex items-center gap-1.5 text-[13px] font-semibold active:scale-95 transition-transform"
+                aria-label="New trade"
+              >
+                <Plus size={16} strokeWidth={2.5} />
+                New
+              </button>
               <Sheet>
                 <SheetTrigger asChild>
-                  <button className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 active:scale-95 transition-all" aria-label="More actions">
+                  <button className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 active:scale-95 transition-all border border-border/60" aria-label="More actions">
                     <MoreHorizontal size={18} />
                   </button>
                 </SheetTrigger>
@@ -179,26 +207,17 @@ export default function Index() {
                     <SheetTitle className="text-base">Actions</SheetTitle>
                   </SheetHeader>
                   <div className="flex flex-col gap-1 mt-4">
-                    <button onClick={() => { setEditTrade(null); setModalOpen(true); }} className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm text-foreground hover:bg-muted/60 transition-all">
-                      <Plus size={18} className="text-muted-foreground" /> New Trade
-                    </button>
                     <button onClick={() => fileRef.current?.click()} className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm text-foreground hover:bg-muted/60 transition-all">
                       <Upload size={18} className="text-muted-foreground" /> Import Trades
                     </button>
                     <button onClick={handleExport} className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm text-foreground hover:bg-muted/60 transition-all">
                       <Download size={18} className="text-muted-foreground" /> Export Trades
                     </button>
+                    <div className="h-px bg-border/60 my-1" />
+                    <ThemeToggleRow />
                   </div>
                 </SheetContent>
               </Sheet>
-              <button
-                onClick={() => { setEditTrade(null); setModalOpen(true); }}
-                className="h-9 px-3.5 rounded-xl bg-foreground text-background flex items-center gap-1.5 text-[13px] font-medium active:scale-95 transition-transform"
-                aria-label="New trade"
-              >
-                <Plus size={16} />
-                New
-              </button>
             </div>
           )}
         </div>
