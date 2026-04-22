@@ -165,12 +165,19 @@ export default function Index() {
 
           {/* Mobile actions */}
           {isMobile && (
-            <div className="flex items-center gap-1 shrink-0">
-              <ThemeToggle />
+            <div className="flex items-center gap-1.5 shrink-0">
               <input ref={fileRef} type="file" accept=".csv" className="hidden" onChange={handleImport} />
+              <button
+                onClick={() => { setEditTrade(null); setModalOpen(true); }}
+                className="h-9 px-3.5 rounded-xl bg-foreground text-background flex items-center gap-1.5 text-[13px] font-semibold active:scale-95 transition-transform"
+                aria-label="New trade"
+              >
+                <Plus size={16} strokeWidth={2.5} />
+                New
+              </button>
               <Sheet>
                 <SheetTrigger asChild>
-                  <button className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 active:scale-95 transition-all" aria-label="More actions">
+                  <button className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 active:scale-95 transition-all border border-border/60" aria-label="More actions">
                     <MoreHorizontal size={18} />
                   </button>
                 </SheetTrigger>
@@ -179,26 +186,17 @@ export default function Index() {
                     <SheetTitle className="text-base">Actions</SheetTitle>
                   </SheetHeader>
                   <div className="flex flex-col gap-1 mt-4">
-                    <button onClick={() => { setEditTrade(null); setModalOpen(true); }} className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm text-foreground hover:bg-muted/60 transition-all">
-                      <Plus size={18} className="text-muted-foreground" /> New Trade
-                    </button>
                     <button onClick={() => fileRef.current?.click()} className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm text-foreground hover:bg-muted/60 transition-all">
                       <Upload size={18} className="text-muted-foreground" /> Import Trades
                     </button>
                     <button onClick={handleExport} className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm text-foreground hover:bg-muted/60 transition-all">
                       <Download size={18} className="text-muted-foreground" /> Export Trades
                     </button>
+                    <div className="h-px bg-border/60 my-1" />
+                    <ThemeToggleRow />
                   </div>
                 </SheetContent>
               </Sheet>
-              <button
-                onClick={() => { setEditTrade(null); setModalOpen(true); }}
-                className="h-9 px-3.5 rounded-xl bg-foreground text-background flex items-center gap-1.5 text-[13px] font-medium active:scale-95 transition-transform"
-                aria-label="New trade"
-              >
-                <Plus size={16} />
-                New
-              </button>
             </div>
           )}
         </div>
