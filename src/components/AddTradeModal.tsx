@@ -87,8 +87,8 @@ export default function AddTradeModal({ open, onClose, onSave, editTrade }: AddT
             exit={isMobile ? { opacity: 0, y: '100%' } : { opacity: 0, scale: 0.97, y: 10 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             onClick={e => e.stopPropagation()}
-            className={`bg-background border border-border/60 p-5 md:p-7 w-full max-h-[92vh] overflow-y-auto ${
-              isMobile ? 'rounded-t-2xl' : 'rounded-2xl max-w-lg shadow-xl'
+            className={`bg-background border border-border/60 w-full max-h-[92vh] overflow-y-auto overscroll-contain ${
+              isMobile ? 'rounded-t-2xl px-5 pt-5 pb-[calc(env(safe-area-inset-bottom,0px)+1.25rem)]' : 'rounded-2xl max-w-lg shadow-xl p-7'
             }`}
           >
             {/* Mobile drag handle */}
