@@ -95,16 +95,37 @@ export default function Index() {
     { id: 'tools', label: 'Tools', icon: <Calculator size={isMobile ? 20 : 15} /> },
   ];
 
+  const currentTabLabel = tabs.find(t => t.id === tab)?.label ?? '';
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 h-14 md:h-16 flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-foreground flex items-center justify-center">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 h-14 md:h-16 flex items-center justify-between gap-3">
+          {/* Brand */}
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-7 h-7 rounded-lg bg-foreground flex items-center justify-center shrink-0">
               <Activity size={13} className="text-background" />
             </div>
-            <h1 className="text-[15px] font-semibold tracking-tight">TradeVault</h1>
+            {!isMobile ? (
+              <h1 className="text-[15px] font-semibold tracking-tight">TradeVault</h1>
+            ) : (
+              <div className="flex items-baseline gap-2 min-w-0">
+                <h1 className="text-[15px] font-semibold tracking-tight">TradeVault</h1>
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={currentTabLabel}
+                    initial={{ opacity: 0, y: 4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -4 }}
+                    transition={{ duration: 0.2 }}
+                    className="text-[12px] text-muted-foreground truncate"
+                  >
+                    · {currentTabLabel}
+                  </motion.span>
+                </AnimatePresence>
+              </div>
+            )}
           </div>
 
           {/* Desktop nav */}
@@ -144,26 +165,23 @@ export default function Index() {
 
           {/* Mobile actions */}
           {isMobile && (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 shrink-0">
               <ThemeToggle />
               <input ref={fileRef} type="file" accept=".csv" className="hidden" onChange={handleImport} />
-              <button
-                onClick={() => { setEditTrade(null); setModalOpen(true); }}
-                className="w-9 h-9 rounded-xl bg-foreground text-background flex items-center justify-center"
-              >
-                <Plus size={18} />
-              </button>
               <Sheet>
                 <SheetTrigger asChild>
-                  <button className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all">
+                  <button className="w-9 h-9 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 active:scale-95 transition-all" aria-label="More actions">
                     <MoreHorizontal size={18} />
                   </button>
                 </SheetTrigger>
-                <SheetContent side="bottom" className="rounded-t-2xl pb-8">
+                <SheetContent side="bottom" className="rounded-t-2xl pb-[calc(env(safe-area-inset-bottom,0px)+2rem)]">
                   <SheetHeader>
                     <SheetTitle className="text-base">Actions</SheetTitle>
                   </SheetHeader>
-                  <div className="flex flex-col gap-2 mt-4">
+                  <div className="flex flex-col gap-1 mt-4">
+                    <button onClick={() => { setEditTrade(null); setModalOpen(true); }} className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm text-foreground hover:bg-muted/60 transition-all">
+                      <Plus size={18} className="text-muted-foreground" /> New Trade
+                    </button>
                     <button onClick={() => fileRef.current?.click()} className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm text-foreground hover:bg-muted/60 transition-all">
                       <Upload size={18} className="text-muted-foreground" /> Import Trades
                     </button>
@@ -173,6 +191,14 @@ export default function Index() {
                   </div>
                 </SheetContent>
               </Sheet>
+              <button
+                onClick={() => { setEditTrade(null); setModalOpen(true); }}
+                className="h-9 px-3.5 rounded-xl bg-foreground text-background flex items-center gap-1.5 text-[13px] font-medium active:scale-95 transition-transform"
+                aria-label="New trade"
+              >
+                <Plus size={16} />
+                New
+              </button>
             </div>
           )}
         </div>
