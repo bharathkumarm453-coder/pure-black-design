@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Trash2, Edit2, TrendingUp, TrendingDown, BarChart } from "lucide-react";
+import { useState, useRef } from "react";
+import { motion, AnimatePresence, useMotionValue, useTransform, PanInfo } from "framer-motion";
+import { Trash2, Edit2, TrendingUp, TrendingDown, BarChart, Plus } from "lucide-react";
 import { Trade, getPnL, getRiskReward } from "@/lib/trades";
 import ImageGallery, { ImageThumbnail } from "@/components/ImageGallery";
 import TradeDetailDrawer from "@/components/TradeDetailDrawer";
