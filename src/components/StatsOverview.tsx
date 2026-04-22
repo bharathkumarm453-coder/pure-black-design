@@ -18,13 +18,13 @@ function StatCard({ label, value, icon, type = 'neutral', delay = 0 }: StatCardP
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] }}
-      className="surface-card p-5 hover:shadow-md transition-shadow duration-500"
+      className="surface-card p-3 md:p-5 hover:shadow-md transition-shadow duration-500"
     >
-      <div className="flex items-center justify-between mb-4">
-        <span className="text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">{label}</span>
-        <span className="text-muted-foreground/40">{icon}</span>
+      <div className="flex items-center justify-between mb-2 md:mb-4">
+        <span className="text-[10px] md:text-[11px] font-medium uppercase tracking-[0.08em] text-muted-foreground">{label}</span>
+        <span className="text-muted-foreground/40 hidden md:inline-flex">{icon}</span>
       </div>
-      <p className={`text-[28px] font-semibold tracking-tight leading-none tabular-nums ${valueColor}`}>{value}</p>
+      <p className={`text-[18px] md:text-[28px] font-semibold tracking-tight leading-none tabular-nums ${valueColor}`}>{value}</p>
     </motion.div>
   );
 }
