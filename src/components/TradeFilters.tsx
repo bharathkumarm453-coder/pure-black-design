@@ -246,3 +246,14 @@ export default function TradeFilters({ filters, onChange, trades }: TradeFilters
     </div>
   );
 }
+
+function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }) {
+  return (
+    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-muted text-[11px] font-medium text-foreground border border-border/60">
+      {label}
+      <button onClick={onRemove} className="text-muted-foreground hover:text-foreground transition-colors -mr-0.5" aria-label={`Remove ${label}`}>
+        <X size={11} />
+      </button>
+    </span>
+  );
+}
