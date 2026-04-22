@@ -101,29 +101,33 @@ export default function Index() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-4 md:px-8 h-14 md:h-16 flex items-center justify-between gap-3">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 h-14 md:h-16 flex items-center justify-between gap-2 md:gap-3">
           {/* Brand */}
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-7 h-7 rounded-lg bg-foreground flex items-center justify-center shrink-0">
-              <Activity size={13} className="text-background" />
-            </div>
+          <div className="flex items-center gap-2.5 min-w-0 flex-1 md:flex-initial">
+            <button
+              onClick={() => isMobile && setTab('dashboard')}
+              className="w-8 h-8 rounded-lg bg-foreground flex items-center justify-center shrink-0 active:scale-95 transition-transform"
+              aria-label="Home"
+            >
+              <Activity size={14} className="text-background" />
+            </button>
             {!isMobile ? (
               <h1 className="text-[15px] font-semibold tracking-tight">TradeVault</h1>
             ) : (
-              <div className="flex items-baseline gap-2 min-w-0">
-                <h1 className="text-[15px] font-semibold tracking-tight">TradeVault</h1>
+              <div className="min-w-0 flex-1">
                 <AnimatePresence mode="wait">
-                  <motion.span
+                  <motion.h1
                     key={currentTabLabel}
                     initial={{ opacity: 0, y: 4 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.2 }}
-                    className="text-[12px] text-muted-foreground truncate"
+                    transition={{ duration: 0.18 }}
+                    className="text-[16px] font-semibold tracking-tight truncate leading-tight"
                   >
-                    · {currentTabLabel}
-                  </motion.span>
+                    {currentTabLabel}
+                  </motion.h1>
                 </AnimatePresence>
+                <p className="text-[10px] text-muted-foreground/70 leading-tight">TradeVault</p>
               </div>
             )}
           </div>
