@@ -40,6 +40,23 @@ function ThemeToggle() {
   );
 }
 
+function ThemeToggleRow() {
+  const { theme, setTheme } = useTheme();
+  const isDark = theme === 'dark';
+  return (
+    <button
+      onClick={() => setTheme(isDark ? 'light' : 'dark')}
+      className="flex items-center justify-between gap-3 px-4 py-3.5 rounded-xl text-sm text-foreground hover:bg-muted/60 transition-all w-full"
+    >
+      <span className="flex items-center gap-3">
+        {isDark ? <Moon size={18} className="text-muted-foreground" /> : <Sun size={18} className="text-muted-foreground" />}
+        {isDark ? 'Dark Mode' : 'Light Mode'}
+      </span>
+      <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-muted text-muted-foreground">{isDark ? 'On' : 'Off'}</span>
+    </button>
+  );
+}
+
 export default function Index() {
   const [trades, setTrades] = useState<Trade[]>(getTrades);
   const [tab, setTab] = useState<Tab>('dashboard');
