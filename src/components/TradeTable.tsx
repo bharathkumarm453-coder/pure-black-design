@@ -130,15 +130,15 @@ export default function TradeTable({ trades, onDelete, onEdit }: TradeTableProps
       <>
         <div className="space-y-2.5">
           {sorted.map((trade, i) => (
-            <div key={trade.id} onClick={() => setDetailTrade(trade)} className="cursor-pointer">
-              <TradeCard
-                trade={trade}
-                index={i}
-                onDelete={() => onDelete(trade.id)}
-                onEdit={() => onEdit(trade)}
-                onImageClick={() => setGalleryTrade(trade)}
-              />
-            </div>
+            <TradeCard
+              key={trade.id}
+              trade={trade}
+              index={i}
+              onDelete={() => onDelete(trade.id)}
+              onEdit={() => onEdit(trade)}
+              onImageClick={() => setGalleryTrade(trade)}
+              onTap={() => setDetailTrade(trade)}
+            />
           ))}
         </div>
         <ImageGallery images={galleryTrade?.images || []} open={!!galleryTrade} onClose={() => setGalleryTrade(null)} symbol={galleryTrade?.symbol} />
