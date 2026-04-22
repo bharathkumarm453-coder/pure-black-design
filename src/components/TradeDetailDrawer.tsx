@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { X, TrendingUp, TrendingDown, Edit2, Trash2, Calendar, Tag, Target, DollarSign } from "lucide-react";
+import { X, TrendingUp, TrendingDown, Edit2, Trash2, Calendar, Tag, Target } from "lucide-react";
 import { Trade, getPnL, getRiskReward } from "@/lib/trades";
 import { useEffect, useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface TradeDetailDrawerProps {
   trade: Trade | null;
@@ -12,13 +13,18 @@ interface TradeDetailDrawerProps {
 
 export default function TradeDetailDrawer({ trade, onClose, onEdit, onDelete }: TradeDetailDrawerProps) {
   const [activeImage, setActiveImage] = useState(0);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     setActiveImage(0);
     if (trade) {
       const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
       window.addEventListener('keydown', onKey);
-      return () => window.removeEventListener('keydown', onKey);
+      document.body.style.overflow = 'hidden';
+      return () => {
+        window.removeEventListener('keydown', onKey);
+        document.body.style.overflow = '';
+      };
     }
   }, [trade, onClose]);
 
@@ -35,12 +41,27 @@ export default function TradeDetailDrawer({ trade, onClose, onEdit, onDelete }: 
             className="fixed inset-0 z-50 bg-background/70 backdrop-blur-sm"
           />
           <motion.aside
-            initial={{ x: '100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '100%' }}
+            initial={isMobile ? { y: '100%' } : { x: '100%' }}
+            animate={isMobile ? { y: 0 } : { x: 0 }}
+            exit={isMobile ? { y: '100%' } : { x: '100%' }}
             transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed right-0 top-0 bottom-0 z-50 w-full md:w-[520px] bg-card border-l border-border overflow-y-auto"
+            drag={isMobile ? 'y' : false}
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.4 }}
+            onDragEnd={(_, info) => {
+              if (info.offset.y > 120 || info.velocity.y > 600) onClose();
+            }}
+            className={
+              isMobile
+                ? "fixed left-0 right-0 bottom-0 z-50 max-h-[92vh] bg-card border-t border-border rounded-t-2xl overflow-y-auto safe-area-bottom"
+                : "fixed right-0 top-0 bottom-0 z-50 w-full md:w-[520px] bg-card border-l border-border overflow-y-auto"
+            }
           >
+            {isMobile && (
+              <div className="sticky top-0 z-10 flex justify-center pt-3 pb-1 bg-card">
+                <div className="w-10 h-1 rounded-full bg-muted-foreground/30" />
+              </div>
+            )}
             <TradeDetailContent
               trade={trade}
               onClose={onClose}
