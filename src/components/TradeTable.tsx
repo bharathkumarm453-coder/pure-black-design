@@ -12,72 +12,99 @@ interface TradeTableProps {
   onEdit: (trade: Trade) => void;
 }
 
-function TradeCard({ trade, onDelete, onEdit, onImageClick, index }: { trade: Trade; onDelete: () => void; onEdit: () => void; onImageClick: () => void; index: number }) {
+function TradeCard({ trade, onDelete, onEdit, onImageClick, onTap, index }: { trade: Trade; onDelete: () => void; onEdit: () => void; onImageClick: () => void; onTap: () => void; index: number }) {
   const pnl = getPnL(trade);
   const rr = getRiskReward(trade);
   const isWin = pnl >= 0;
   const images = trade.images || [];
+  const x = useMotionValue(0);
+  const deleteOpacity = useTransform(x, [-100, -40, 0], [1, 0.5, 0]);
+  const cardBg = useTransform(x, [-100, 0], ['hsl(var(--loss) / 0.08)', 'hsl(var(--card))']);
+  const draggedRef = useRef(false);
+
+  const handleDragEnd = (_: any, info: PanInfo) => {
+    if (info.offset.x < -80) {
+      onDelete();
+    } else {
+      x.set(0);
+    }
+    setTimeout(() => { draggedRef.current = false; }, 50);
+  };
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.03, ease: [0.16, 1, 0.3, 1] }}
-      className="surface-card p-4 space-y-3"
+      transition={{ delay: Math.min(index * 0.03, 0.3), ease: [0.16, 1, 0.3, 1] }}
+      className="relative overflow-hidden rounded-2xl"
     >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <span className="text-sm font-semibold tracking-tight">{trade.symbol}</span>
-          <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-semibold ${
-            trade.direction === 'LONG' ? 'bg-profit-subtle text-profit' : 'bg-loss-subtle text-loss'
-          }`}>
-            {trade.direction === 'LONG' ? <TrendingUp size={9} /> : <TrendingDown size={9} />}
-            {trade.direction}
+      {/* Delete reveal layer */}
+      <motion.div
+        style={{ opacity: deleteOpacity }}
+        className="absolute inset-0 flex items-center justify-end pr-6 bg-loss/10 rounded-2xl pointer-events-none"
+      >
+        <Trash2 className="text-loss" size={20} />
+      </motion.div>
+
+      <motion.div
+        drag="x"
+        dragConstraints={{ left: -120, right: 0 }}
+        dragElastic={0.1}
+        onDragStart={() => { draggedRef.current = true; }}
+        onDragEnd={handleDragEnd}
+        style={{ x, backgroundColor: cardBg }}
+        onClick={() => { if (!draggedRef.current) onTap(); }}
+        className="surface-card p-4 space-y-3 cursor-pointer touch-pan-y active:scale-[0.99] transition-transform"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <span className="text-sm font-semibold tracking-tight truncate">{trade.symbol}</span>
+            <span className={`inline-flex items-center gap-0.5 px-2 py-0.5 rounded-full text-[10px] font-semibold shrink-0 ${
+              trade.direction === 'LONG' ? 'bg-profit-subtle text-profit' : 'bg-loss-subtle text-loss'
+            }`}>
+              {trade.direction === 'LONG' ? <TrendingUp size={9} /> : <TrendingDown size={9} />}
+              {trade.direction}
+            </span>
+            {trade.setup && <span className="text-[11px] text-muted-foreground truncate">{trade.setup}</span>}
+          </div>
+          <span className={`text-sm tabular-nums font-semibold shrink-0 ${isWin ? 'text-profit' : 'text-loss'}`}>
+            {isWin ? '+' : ''}{pnl.toFixed(2)}
           </span>
-          {trade.setup && <span className="text-[11px] text-muted-foreground">{trade.setup}</span>}
         </div>
-        <span className={`text-sm font-mono font-semibold ${isWin ? 'text-profit' : 'text-loss'}`}>
-          {isWin ? '+' : ''}{pnl.toFixed(2)}
-        </span>
-      </div>
 
-      <div className="grid grid-cols-4 gap-3 text-[11px]">
-        <div>
-          <p className="text-muted-foreground/60 mb-0.5">Entry</p>
-          <p className="font-mono font-medium">${trade.entryPrice.toFixed(2)}</p>
+        <div className="grid grid-cols-4 gap-3 text-[11px]">
+          <div>
+            <p className="text-muted-foreground/60 mb-0.5">Entry</p>
+            <p className="tabular-nums font-medium">${trade.entryPrice.toFixed(2)}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground/60 mb-0.5">Exit</p>
+            <p className="tabular-nums font-medium">${trade.exitPrice.toFixed(2)}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground/60 mb-0.5">Qty</p>
+            <p className="tabular-nums font-medium">{trade.quantity}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground/60 mb-0.5">R:R</p>
+            <p className={`tabular-nums font-medium ${rr !== null ? (rr >= 0 ? 'text-profit' : 'text-loss') : 'text-muted-foreground'}`}>
+              {rr !== null ? `${rr.toFixed(1)}R` : '—'}
+            </p>
+          </div>
         </div>
-        <div>
-          <p className="text-muted-foreground/60 mb-0.5">Exit</p>
-          <p className="font-mono font-medium">${trade.exitPrice.toFixed(2)}</p>
-        </div>
-        <div>
-          <p className="text-muted-foreground/60 mb-0.5">Qty</p>
-          <p className="font-mono font-medium">{trade.quantity}</p>
-        </div>
-        <div>
-          <p className="text-muted-foreground/60 mb-0.5">R:R</p>
-          <p className={`font-mono font-medium ${rr !== null ? (rr >= 0 ? 'text-profit' : 'text-loss') : 'text-muted-foreground'}`}>
-            {rr !== null ? `${rr.toFixed(1)}R` : '—'}
-          </p>
-        </div>
-      </div>
 
-      <div className="flex items-center justify-between pt-1 border-t border-border/40">
-        <span className="text-[10px] text-muted-foreground font-mono">{trade.exitDate}</span>
-        <div className="flex items-center gap-1">
-          {images.length > 0 && (
-            <button onClick={onImageClick} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-all">
+        <div className="flex items-center justify-between pt-1 border-t border-border/40">
+          <span className="text-[10px] text-muted-foreground tabular-nums">{trade.exitDate}</span>
+          <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+            {images.length > 0 && (
               <ImageThumbnail images={images} onClick={onImageClick} />
+            )}
+            <button onClick={onEdit} className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-all">
+              <Edit2 size={14} />
             </button>
-          )}
-          <button onClick={onEdit} className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted transition-all">
-            <Edit2 size={13} />
-          </button>
-          <button onClick={onDelete} className="p-1.5 rounded-lg text-muted-foreground hover:text-loss hover:bg-loss-subtle transition-all">
-            <Trash2 size={13} />
-          </button>
+          </div>
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 }
