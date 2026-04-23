@@ -1,8 +1,10 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
-import { Plus, Download, Upload, BarChart3, BookOpen, Activity, CalendarDays, Sun, Moon, MoreHorizontal, Calculator } from "lucide-react";
-import { Trade, getTrades, saveTrades, addTrade, deleteTrade, updateTrade, calculateStats, exportTradesToCSV, importTradesFromCSV, getRiskReward } from "@/lib/trades";
+import { Plus, Download, Upload, BarChart3, BookOpen, Activity, CalendarDays, Sun, Moon, MoreHorizontal, Calculator, LogOut, Loader2, User as UserIcon } from "lucide-react";
+import { Trade, calculateStats, exportTradesToCSV, importTradesFromCSV, getRiskReward } from "@/lib/trades";
+import { useTrades } from "@/hooks/useTrades";
+import { useAuth } from "@/hooks/useAuth";
 import StatsOverview from "@/components/StatsOverview";
 import TradeTable from "@/components/TradeTable";
 import EquityCurve from "@/components/EquityCurve";
