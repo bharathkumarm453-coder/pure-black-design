@@ -1,8 +1,10 @@
-import { useState, useCallback, useRef } from "react";
+import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
-import { Plus, Download, Upload, BarChart3, BookOpen, Activity, CalendarDays, Sun, Moon, MoreHorizontal, Calculator } from "lucide-react";
-import { Trade, getTrades, saveTrades, addTrade, deleteTrade, updateTrade, calculateStats, exportTradesToCSV, importTradesFromCSV, getRiskReward } from "@/lib/trades";
+import { Plus, Download, Upload, BarChart3, BookOpen, Activity, CalendarDays, Sun, Moon, MoreHorizontal, Calculator, LogOut, Loader2, User as UserIcon } from "lucide-react";
+import { Trade, calculateStats, exportTradesToCSV, importTradesFromCSV, getRiskReward } from "@/lib/trades";
+import { useTrades } from "@/hooks/useTrades";
+import { useAuth } from "@/hooks/useAuth";
 import StatsOverview from "@/components/StatsOverview";
 import TradeTable from "@/components/TradeTable";
 import EquityCurve from "@/components/EquityCurve";
@@ -58,7 +60,8 @@ function ThemeToggleRow() {
 }
 
 export default function Index() {
-  const [trades, setTrades] = useState<Trade[]>(getTrades);
+  const { trades, loading, addTrade, updateTrade, deleteTrade, importTrades } = useTrades();
+  const { user, signOut } = useAuth();
   const [tab, setTab] = useState<Tab>('dashboard');
   const [modalOpen, setModalOpen] = useState(false);
   const [editTrade, setEditTrade] = useState<Trade | null>(null);
@@ -68,16 +71,21 @@ export default function Index() {
   const isMobile = useIsMobile();
 
   const stats = calculateStats(trades);
-  const refresh = useCallback(() => setTrades(getTrades()), []);
 
-  const handleAdd = (trade: Omit<Trade, 'id'>) => {
-    if (editTrade) { updateTrade(editTrade.id, trade); toast.success('Trade updated'); }
-    else { addTrade(trade); toast.success('Trade added'); }
-    setEditTrade(null);
-    refresh();
+  const handleAdd = async (trade: Omit<Trade, 'id'>) => {
+    try {
+      if (editTrade) { await updateTrade(editTrade.id, trade); toast.success('Trade updated'); }
+      else { await addTrade(trade); toast.success('Trade added'); }
+      setEditTrade(null);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to save trade');
+    }
   };
 
-  const handleDelete = (id: string) => { deleteTrade(id); toast.success('Trade deleted'); refresh(); };
+  const handleDelete = async (id: string) => {
+    try { await deleteTrade(id); toast.success('Trade deleted'); }
+    catch (err) { toast.error(err instanceof Error ? err.message : 'Delete failed'); }
+  };
   const handleEdit = (trade: Trade) => { setEditTrade(trade); setModalOpen(true); };
 
   const handleExport = () => {
@@ -94,14 +102,23 @@ export default function Index() {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => {
-      const imported = importTradesFromCSV(ev.target?.result as string);
-      saveTrades([...getTrades(), ...imported]);
-      refresh();
-      toast.success(`Imported ${imported.length} trades`);
+    reader.onload = async (ev) => {
+      try {
+        const imported = importTradesFromCSV(ev.target?.result as string);
+        const stripped = imported.map(({ id: _id, ...rest }) => rest);
+        await importTrades(stripped);
+        toast.success(`Imported ${stripped.length} trades`);
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'Import failed');
+      }
     };
     reader.readAsText(file);
     e.target.value = '';
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success('Signed out');
   };
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
@@ -181,6 +198,14 @@ export default function Index() {
               <button onClick={() => { setEditTrade(null); setModalOpen(true); }} className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-foreground text-background text-[13px] font-medium hover:opacity-90 transition-opacity duration-200">
                 <Plus size={15} /> New Trade
               </button>
+              <button
+                onClick={handleSignOut}
+                title={user?.email ?? ''}
+                className="w-9 h-9 ml-1 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all duration-200"
+                aria-label="Sign out"
+              >
+                <LogOut size={15} />
+              </button>
             </div>
           )}
 
@@ -215,6 +240,14 @@ export default function Index() {
                     </button>
                     <div className="h-px bg-border/60 my-1" />
                     <ThemeToggleRow />
+                    <div className="h-px bg-border/60 my-1" />
+                    <div className="px-4 py-2">
+                      <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground mb-1">Signed in as</p>
+                      <p className="text-[13px] text-foreground truncate">{user?.email}</p>
+                    </div>
+                    <button onClick={handleSignOut} className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm text-loss hover:bg-loss/10 transition-all">
+                      <LogOut size={18} /> Sign out
+                    </button>
                   </div>
                 </SheetContent>
               </Sheet>
