@@ -198,6 +198,14 @@ export default function Index() {
               <button onClick={() => { setEditTrade(null); setModalOpen(true); }} className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-foreground text-background text-[13px] font-medium hover:opacity-90 transition-opacity duration-200">
                 <Plus size={15} /> New Trade
               </button>
+              <button
+                onClick={handleSignOut}
+                title={user?.email ?? ''}
+                className="w-9 h-9 ml-1 rounded-xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all duration-200"
+                aria-label="Sign out"
+              >
+                <LogOut size={15} />
+              </button>
             </div>
           )}
 
@@ -232,6 +240,14 @@ export default function Index() {
                     </button>
                     <div className="h-px bg-border/60 my-1" />
                     <ThemeToggleRow />
+                    <div className="h-px bg-border/60 my-1" />
+                    <div className="px-4 py-2">
+                      <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground mb-1">Signed in as</p>
+                      <p className="text-[13px] text-foreground truncate">{user?.email}</p>
+                    </div>
+                    <button onClick={handleSignOut} className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm text-loss hover:bg-loss/10 transition-all">
+                      <LogOut size={18} /> Sign out
+                    </button>
                   </div>
                 </SheetContent>
               </Sheet>
