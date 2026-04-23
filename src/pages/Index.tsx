@@ -60,7 +60,8 @@ function ThemeToggleRow() {
 }
 
 export default function Index() {
-  const [trades, setTrades] = useState<Trade[]>(getTrades);
+  const { trades, loading, addTrade, updateTrade, deleteTrade, importTrades } = useTrades();
+  const { user, signOut } = useAuth();
   const [tab, setTab] = useState<Tab>('dashboard');
   const [modalOpen, setModalOpen] = useState(false);
   const [editTrade, setEditTrade] = useState<Trade | null>(null);
@@ -70,16 +71,21 @@ export default function Index() {
   const isMobile = useIsMobile();
 
   const stats = calculateStats(trades);
-  const refresh = useCallback(() => setTrades(getTrades()), []);
 
-  const handleAdd = (trade: Omit<Trade, 'id'>) => {
-    if (editTrade) { updateTrade(editTrade.id, trade); toast.success('Trade updated'); }
-    else { addTrade(trade); toast.success('Trade added'); }
-    setEditTrade(null);
-    refresh();
+  const handleAdd = async (trade: Omit<Trade, 'id'>) => {
+    try {
+      if (editTrade) { await updateTrade(editTrade.id, trade); toast.success('Trade updated'); }
+      else { await addTrade(trade); toast.success('Trade added'); }
+      setEditTrade(null);
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to save trade');
+    }
   };
 
-  const handleDelete = (id: string) => { deleteTrade(id); toast.success('Trade deleted'); refresh(); };
+  const handleDelete = async (id: string) => {
+    try { await deleteTrade(id); toast.success('Trade deleted'); }
+    catch (err) { toast.error(err instanceof Error ? err.message : 'Delete failed'); }
+  };
   const handleEdit = (trade: Trade) => { setEditTrade(trade); setModalOpen(true); };
 
   const handleExport = () => {
@@ -96,14 +102,23 @@ export default function Index() {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = (ev) => {
-      const imported = importTradesFromCSV(ev.target?.result as string);
-      saveTrades([...getTrades(), ...imported]);
-      refresh();
-      toast.success(`Imported ${imported.length} trades`);
+    reader.onload = async (ev) => {
+      try {
+        const imported = importTradesFromCSV(ev.target?.result as string);
+        const stripped = imported.map(({ id: _id, ...rest }) => rest);
+        await importTrades(stripped);
+        toast.success(`Imported ${stripped.length} trades`);
+      } catch (err) {
+        toast.error(err instanceof Error ? err.message : 'Import failed');
+      }
     };
     reader.readAsText(file);
     e.target.value = '';
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success('Signed out');
   };
 
   const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
