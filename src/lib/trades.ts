@@ -39,38 +39,8 @@ export interface TradeStats {
   loseStreak: number;
 }
 
-const STORAGE_KEY = 'trading-journal-trades';
-
-export function getTrades(): Trade[] {
-  const data = localStorage.getItem(STORAGE_KEY);
-  return data ? JSON.parse(data) : [];
-}
-
-export function saveTrades(trades: Trade[]) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(trades));
-}
-
-export function addTrade(trade: Omit<Trade, 'id'>): Trade {
-  const trades = getTrades();
-  const newTrade = { ...trade, id: crypto.randomUUID() };
-  trades.push(newTrade);
-  saveTrades(trades);
-  return newTrade;
-}
-
-export function updateTrade(id: string, updates: Partial<Trade>) {
-  const trades = getTrades();
-  const idx = trades.findIndex(t => t.id === id);
-  if (idx !== -1) {
-    trades[idx] = { ...trades[idx], ...updates };
-    saveTrades(trades);
-  }
-}
-
-export function deleteTrade(id: string) {
-  const trades = getTrades().filter(t => t.id !== id);
-  saveTrades(trades);
-}
+// Trade persistence is handled in `src/hooks/useTrades.ts` (Lovable Cloud).
+// This file only contains pure helpers (stats, derived series, CSV).
 
 export function getPnL(trade: Trade): number {
   const raw = trade.direction === 'LONG'
