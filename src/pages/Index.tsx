@@ -129,7 +129,7 @@ export default function Index() {
               <Activity size={14} className="text-background" />
             </button>
             {!isMobile ? (
-              <h1 className="text-[15px] font-semibold tracking-tight">TradeVault</h1>
+              <h1 className="text-[15px] font-semibold tracking-tight">ada</h1>
             ) : (
               <div className="min-w-0 flex-1">
                 <AnimatePresence mode="wait">
@@ -144,7 +144,7 @@ export default function Index() {
                     {currentTabLabel}
                   </motion.h1>
                 </AnimatePresence>
-                <p className="text-[10px] text-muted-foreground/70 leading-tight">TradeVault</p>
+                <p className="text-[10px] text-muted-foreground/70 leading-tight">ada</p>
               </div>
             )}
           </div>
