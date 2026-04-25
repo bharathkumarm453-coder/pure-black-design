@@ -17,6 +17,7 @@ import TradeFilters, { TradeFilterState, defaultFilters, applyFilters } from "@/
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import bkmProfile from "@/assets/bkm-profile.jpeg";
 
 type Tab = 'dashboard' | 'journal' | 'analytics' | 'calendar' | 'tools';
 
@@ -56,6 +57,22 @@ function ThemeToggleRow() {
       </span>
       <span className="text-[11px] font-medium px-2 py-0.5 rounded-md bg-muted text-muted-foreground">{isDark ? 'On' : 'Off'}</span>
     </button>
+  );
+}
+
+function DeveloperProfile({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className={`flex items-center ${compact ? 'gap-3 px-4 py-3' : 'gap-2.5 pl-2 pr-3 py-1.5'} rounded-xl bg-muted/50 border border-border/60`}>
+      <img
+        src={bkmProfile}
+        alt="Bkm developer profile"
+        className={`${compact ? 'w-11 h-11' : 'w-8 h-8'} rounded-lg object-cover border border-border/70`}
+      />
+      <div className="min-w-0">
+        <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground leading-tight">Developer</p>
+        <p className="text-[13px] font-semibold text-foreground leading-tight truncate">Bkm</p>
+      </div>
+    </div>
   );
 }
 
@@ -187,6 +204,7 @@ export default function Index() {
           {/* Desktop actions */}
           {!isMobile && (
             <div className="flex items-center gap-1.5">
+              <DeveloperProfile />
               <ThemeToggle />
               <input ref={fileRef} type="file" accept=".csv" className="hidden" onChange={handleImport} />
               <button onClick={() => fileRef.current?.click()} className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[13px] text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all duration-200">
@@ -234,6 +252,8 @@ export default function Index() {
                     <SheetTitle className="text-base">Actions</SheetTitle>
                   </SheetHeader>
                   <div className="flex flex-col gap-1 mt-4">
+                    <DeveloperProfile compact />
+                    <div className="h-px bg-border/60 my-1" />
                     <button onClick={() => fileRef.current?.click()} className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm text-foreground hover:bg-muted/60 transition-all">
                       <Upload size={18} className="text-muted-foreground" /> Import Trades
                     </button>
