@@ -1,11 +1,10 @@
 import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
-import { Plus, Download, Upload, BarChart3, BookOpen, Activity, CalendarDays, Sun, Moon, MoreHorizontal, Calculator, LogOut, LogIn, Cloud } from "lucide-react";
+import { Plus, Download, Upload, BarChart3, BookOpen, Activity, CalendarDays, Sun, Moon, MoreHorizontal, Calculator, LogOut } from "lucide-react";
 import { Trade, calculateStats, exportTradesToCSV, importTradesFromCSV, getRiskReward } from "@/lib/trades";
 import { useTrades } from "@/hooks/useTrades";
 import { useAuth } from "@/hooks/useAuth";
-import { useNavigate } from "react-router-dom";
 import StatsOverview from "@/components/StatsOverview";
 import TradeTable from "@/components/TradeTable";
 import EquityCurve from "@/components/EquityCurve";
@@ -63,7 +62,6 @@ function ThemeToggleRow() {
 export default function Index() {
   const { trades, addTrade, updateTrade, deleteTrade, importTrades } = useTrades();
   const { user, signOut } = useAuth();
-  const navigate = useNavigate();
   const [tab, setTab] = useState<Tab>('dashboard');
   const [modalOpen, setModalOpen] = useState(false);
   const [editTrade, setEditTrade] = useState<Trade | null>(null);
@@ -200,7 +198,7 @@ export default function Index() {
               <button onClick={() => { setEditTrade(null); setModalOpen(true); }} className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-foreground text-background text-[13px] font-medium hover:opacity-90 transition-opacity duration-200">
                 <Plus size={15} /> New Trade
               </button>
-              {user ? (
+              {user && (
                 <button
                   onClick={handleSignOut}
                   title={user.email ?? ''}
@@ -208,10 +206,6 @@ export default function Index() {
                   aria-label="Sign out"
                 >
                   <LogOut size={15} />
-                </button>
-              ) : (
-                <button onClick={() => navigate('/auth')} className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-[13px] text-muted-foreground hover:text-foreground hover:bg-muted/60 transition-all duration-200">
-                  <LogIn size={14} /> Login
                 </button>
               )}
             </div>
@@ -249,7 +243,7 @@ export default function Index() {
                     <div className="h-px bg-border/60 my-1" />
                     <ThemeToggleRow />
                     <div className="h-px bg-border/60 my-1" />
-                    {user ? (
+                    {user && (
                       <>
                         <div className="px-4 py-2">
                           <p className="text-[10px] uppercase tracking-[0.12em] text-muted-foreground mb-1">Signed in as</p>
@@ -259,10 +253,6 @@ export default function Index() {
                           <LogOut size={18} /> Sign out
                         </button>
                       </>
-                    ) : (
-                      <button onClick={() => navigate('/auth')} className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm text-foreground hover:bg-muted/60 transition-all">
-                        <LogIn size={18} className="text-muted-foreground" /> Login for cloud sync
-                      </button>
                     )}
                   </div>
                 </SheetContent>
