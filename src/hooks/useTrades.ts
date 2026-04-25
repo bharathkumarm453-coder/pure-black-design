@@ -3,6 +3,23 @@ import { supabase } from "@/integrations/supabase/client";
 import { Trade } from "@/lib/trades";
 import { useAuth } from "@/hooks/useAuth";
 
+const LOCAL_TRADES_KEY = "ada_guest_trades";
+
+const loadLocalTrades = (): Trade[] => {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(LOCAL_TRADES_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+};
+
+const saveLocalTrades = (trades: Trade[]) => {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(LOCAL_TRADES_KEY, JSON.stringify(trades));
+};
+
 interface DbTrade {
   id: string;
   user_id: string;
@@ -57,12 +74,12 @@ const toRow = (trade: Omit<Trade, "id">, userId: string) => ({
 
 export function useTrades() {
   const { user } = useAuth();
-  const [trades, setTrades] = useState<Trade[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [trades, setTrades] = useState<Trade[]>(() => (user ? [] : loadLocalTrades()));
+  const [loading, setLoading] = useState(Boolean(user));
 
   const refresh = useCallback(async () => {
     if (!user) {
-      setTrades([]);
+      setTrades(loadLocalTrades());
       setLoading(false);
       return;
     }
@@ -86,7 +103,14 @@ export function useTrades() {
 
   const addTrade = useCallback(
     async (trade: Omit<Trade, "id">) => {
-      if (!user) throw new Error("Not authenticated");
+      if (!user) {
+        setTrades((current) => {
+          const next = [...current, { ...trade, id: crypto.randomUUID() }];
+          saveLocalTrades(next);
+          return next;
+        });
+        return;
+      }
       const { error } = await supabase.from("trades").insert(toRow(trade, user.id));
       if (error) throw error;
       await refresh();
@@ -96,7 +120,14 @@ export function useTrades() {
 
   const updateTrade = useCallback(
     async (id: string, trade: Omit<Trade, "id">) => {
-      if (!user) throw new Error("Not authenticated");
+      if (!user) {
+        setTrades((current) => {
+          const next = current.map((item) => (item.id === id ? { ...trade, id } : item));
+          saveLocalTrades(next);
+          return next;
+        });
+        return;
+      }
       const { error } = await supabase
         .from("trades")
         .update(toRow(trade, user.id))
@@ -109,16 +140,32 @@ export function useTrades() {
 
   const deleteTrade = useCallback(
     async (id: string) => {
+      if (!user) {
+        setTrades((current) => {
+          const next = current.filter((item) => item.id !== id);
+          saveLocalTrades(next);
+          return next;
+        });
+        return;
+      }
       const { error } = await supabase.from("trades").delete().eq("id", id);
       if (error) throw error;
       await refresh();
     },
-    [refresh]
+    [user, refresh]
   );
 
   const importTrades = useCallback(
     async (newTrades: Omit<Trade, "id">[]) => {
-      if (!user || newTrades.length === 0) return;
+      if (newTrades.length === 0) return;
+      if (!user) {
+        setTrades((current) => {
+          const next = [...current, ...newTrades.map((trade) => ({ ...trade, id: crypto.randomUUID() }))];
+          saveLocalTrades(next);
+          return next;
+        });
+        return;
+      }
       const rows = newTrades.map((t) => toRow(t, user.id));
       const { error } = await supabase.from("trades").insert(rows);
       if (error) throw error;
