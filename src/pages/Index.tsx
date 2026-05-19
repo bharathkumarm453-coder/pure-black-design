@@ -344,6 +344,7 @@ export default function Index() {
                 ))}
               </div>
               <PerformanceBreakdown trades={trades} />
+              <TagCloud trades={trades} />
             </div>
           )}
           {tab === 'calendar' && (
