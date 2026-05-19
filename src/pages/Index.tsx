@@ -88,12 +88,14 @@ export default function Index() {
   const [tab, setTab] = useState<Tab>('dashboard');
   const [modalOpen, setModalOpen] = useState(false);
   const [editTrade, setEditTrade] = useState<Trade | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const [journalFilters, setJournalFilters] = useState<TradeFilterState>(defaultFilters);
   const filteredTrades = applyFilters(trades, journalFilters);
   const isMobile = useIsMobile();
 
   const stats = calculateStats(trades);
+  const pendingDeleteTrade = pendingDeleteId ? trades.find(t => t.id === pendingDeleteId) ?? null : null;
 
   const handleAdd = async (trade: Omit<Trade, 'id'>) => {
     try {
@@ -105,7 +107,11 @@ export default function Index() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => setPendingDeleteId(id);
+  const confirmDelete = async () => {
+    if (!pendingDeleteId) return;
+    const id = pendingDeleteId;
+    setPendingDeleteId(null);
     try { await deleteTrade(id); toast.success('Trade deleted'); }
     catch (err) { toast.error(err instanceof Error ? err.message : 'Delete failed'); }
   };
