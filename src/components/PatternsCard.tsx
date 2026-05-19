@@ -30,7 +30,7 @@ function totalPnL(trades: Trade[]) {
   return trades.reduce((s, t) => s + getPnL(t), 0);
 }
 
-function bestWorst<T>(entries: [string, T[]][], min = 3) {
+function bestWorst(entries: [string, Trade[]][], min = 3) {
   const eligible = entries.filter(([, v]) => v.length >= min);
   if (eligible.length < 2) return null;
   const ranked = [...eligible].sort((a, b) => winRate(b[1]) - winRate(a[1]));
