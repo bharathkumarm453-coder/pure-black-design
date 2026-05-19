@@ -8,7 +8,7 @@ function CustomTooltip({ active, payload, label }: any) {
     <div className="surface-elevated px-4 py-2.5 text-xs">
       <p className="text-muted-foreground mb-1 font-medium">{label}</p>
       {payload.map((p: any, i: number) => (
-        <p key={i} className="font-mono font-semibold" style={{ color: p.color }}>
+        <p key={i} className="tabular-nums font-semibold" style={{ color: p.color }}>
           {p.name}: ${Number(p.value).toFixed(2)}
         </p>
       ))}
@@ -101,7 +101,7 @@ export default function EquityCurve({ trades }: { trades: Trade[] }) {
               <div key={setup} className="space-y-1.5">
                 <div className="flex justify-between text-xs">
                   <span className="font-medium">{setup}</span>
-                  <span className={`font-mono font-semibold ${data.pnl >= 0 ? 'text-profit' : 'text-loss'}`}>${data.pnl.toFixed(0)}</span>
+                  <span className={`tabular-nums font-semibold ${data.pnl >= 0 ? 'text-profit' : 'text-loss'}`}>${data.pnl.toFixed(0)}</span>
                 </div>
                 <div className="h-1 rounded-full bg-muted overflow-hidden">
                   <motion.div initial={{ width: 0 }} animate={{ width: `${wr}%` }} transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }} className="h-full rounded-full bg-profit" />

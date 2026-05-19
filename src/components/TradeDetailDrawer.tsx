@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X, TrendingUp, TrendingDown, Edit2, Trash2, Calendar, Tag, Target } from "lucide-react";
 import { Trade, getPnL, getRiskReward } from "@/lib/trades";
+import { tagColor } from "@/lib/tagColors";
 import { useEffect, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -165,11 +166,18 @@ function TradeDetailContent({
                 <Tag size={11} /> Tags
               </p>
               <div className="flex flex-wrap gap-1.5">
-                {tags.map((tag, i) => (
-                  <span key={i} className="inline-flex items-center px-2.5 py-1 rounded-full bg-muted text-xs font-medium text-muted-foreground">
-                    {tag}
-                  </span>
-                ))}
+                {tags.map((tag, i) => {
+                  const c = tagColor(tag);
+                  return (
+                    <span
+                      key={i}
+                      className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium border"
+                      style={{ backgroundColor: c.background, color: c.color, borderColor: c.border }}
+                    >
+                      {tag}
+                    </span>
+                  );
+                })}
               </div>
             </div>
           )}

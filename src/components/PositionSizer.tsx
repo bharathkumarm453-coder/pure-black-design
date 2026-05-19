@@ -103,7 +103,7 @@ export default function PositionSizer() {
     };
   }, [accountSize, riskPercent, entryPrice, stopLoss, takeProfit, direction, instrument, leverage]);
 
-  const inputClass = "w-full bg-transparent text-foreground text-base md:text-sm font-mono placeholder:text-muted-foreground/40 focus:outline-none";
+  const inputClass = "w-full bg-transparent text-foreground text-base md:text-sm tabular-nums placeholder:text-muted-foreground/40 focus:outline-none";
 
   const sizeLabel = instrument === 'stock' ? 'shares / units' : 'lots';
   const primarySize = instrument === 'stock' ? calc.positionSize : calc.lots;
@@ -228,7 +228,7 @@ export default function PositionSizer() {
                   <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-2">Position Size</p>
                   <div className="flex items-center justify-center gap-2">
                     <Hash size={20} className="text-muted-foreground/40" />
-                    <AnimatedValue value={primarySize} className="text-3xl md:text-4xl font-semibold font-mono tracking-tight text-foreground" />
+                    <AnimatedValue value={primarySize} className="text-3xl md:text-4xl font-semibold tabular-nums tracking-tight text-foreground" />
                   </div>
                   <p className="text-xs text-muted-foreground/60 mt-1.5">{sizeLabel}</p>
                 </div>
@@ -238,15 +238,15 @@ export default function PositionSizer() {
                   <div className="grid grid-cols-3 gap-3">
                     <div className="surface-card p-3 text-center">
                       <p className="text-[9px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-1">Standard</p>
-                      <AnimatedValue value={calc.lots} className="text-sm font-semibold font-mono text-foreground" />
+                      <AnimatedValue value={calc.lots} className="text-sm font-semibold tabular-nums text-foreground" />
                     </div>
                     <div className="surface-card p-3 text-center">
                       <p className="text-[9px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-1">Mini</p>
-                      <AnimatedValue value={calc.miniLots} className="text-sm font-semibold font-mono text-foreground" />
+                      <AnimatedValue value={calc.miniLots} className="text-sm font-semibold tabular-nums text-foreground" />
                     </div>
                     <div className="surface-card p-3 text-center">
                       <p className="text-[9px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-1">Micro</p>
-                      <AnimatedValue value={calc.microLots} className="text-sm font-semibold font-mono text-foreground" />
+                      <AnimatedValue value={calc.microLots} className="text-sm font-semibold tabular-nums text-foreground" />
                     </div>
                   </div>
                 )}
@@ -255,7 +255,7 @@ export default function PositionSizer() {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="surface-card p-4">
                     <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-1.5">Dollar Risk</p>
-                    <AnimatedValue value={calc.dollarRisk} prefix="$" className="text-lg font-semibold font-mono tracking-tight text-loss" />
+                    <AnimatedValue value={calc.dollarRisk} prefix="$" className="text-lg font-semibold tabular-nums tracking-tight text-loss" />
                   </div>
                   <div className="surface-card p-4">
                     <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-1.5">
@@ -265,22 +265,22 @@ export default function PositionSizer() {
                       value={instrument === 'stock' ? calc.riskPerShare : calc.pipRisk}
                       prefix={instrument === 'stock' ? '$' : ''}
                       suffix={instrument === 'forex' ? ' pips' : instrument === 'xauusd' ? ' pts' : ''}
-                      className="text-lg font-semibold font-mono tracking-tight text-foreground"
+                      className="text-lg font-semibold tabular-nums tracking-tight text-foreground"
                     />
                   </div>
                   <div className="surface-card p-4">
                     <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-1.5">Req. Margin</p>
-                    <AnimatedValue value={calc.margin} prefix="$" className="text-lg font-semibold font-mono tracking-tight text-foreground" />
+                    <AnimatedValue value={calc.margin} prefix="$" className="text-lg font-semibold tabular-nums tracking-tight text-foreground" />
                   </div>
                   {calc.rr > 0 ? (
                     <div className="surface-card p-4">
                       <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-1.5">Risk : Reward</p>
-                      <AnimatedValue value={calc.rr} suffix="R" className={`text-lg font-semibold font-mono tracking-tight ${calc.rr >= 1 ? 'text-profit' : 'text-loss'}`} />
+                      <AnimatedValue value={calc.rr} suffix="R" className={`text-lg font-semibold tabular-nums tracking-tight ${calc.rr >= 1 ? 'text-profit' : 'text-loss'}`} />
                     </div>
                   ) : (
                     <div className="surface-card p-4">
                       <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground mb-1.5">Risk : Reward</p>
-                      <span className="text-lg font-semibold font-mono tracking-tight text-muted-foreground/40">—</span>
+                      <span className="text-lg font-semibold tabular-nums tracking-tight text-muted-foreground/40">—</span>
                     </div>
                   )}
                 </div>
@@ -293,7 +293,7 @@ export default function PositionSizer() {
                     className="surface-card p-4 flex items-center justify-between"
                   >
                     <p className="text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground">Potential Profit</p>
-                    <AnimatedValue value={calc.potentialProfit} prefix="+$" className="text-lg font-semibold font-mono tracking-tight text-profit" />
+                    <AnimatedValue value={calc.potentialProfit} prefix="+$" className="text-lg font-semibold tabular-nums tracking-tight text-profit" />
                   </motion.div>
                 )}
               </motion.div>
