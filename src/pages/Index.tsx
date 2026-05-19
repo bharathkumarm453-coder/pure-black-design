@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
 import { Plus, Download, Upload, BarChart3, BookOpen, Activity, CalendarDays, Sun, Moon, MoreHorizontal, Calculator, LogOut } from "lucide-react";
-import { Trade, calculateStats, exportTradesToCSV, importTradesFromCSV, getRiskReward } from "@/lib/trades";
+import { Trade, calculateStats, exportTradesToCSV, importTradesFromCSV, getRiskReward, getPnL } from "@/lib/trades";
 import { useTrades } from "@/hooks/useTrades";
 import { useAuth } from "@/hooks/useAuth";
 import StatsOverview from "@/components/StatsOverview";
@@ -13,10 +13,16 @@ import AddTradeModal from "@/components/AddTradeModal";
 import CalendarHeatMap from "@/components/CalendarHeatMap";
 import PerformanceBreakdown from "@/components/PerformanceBreakdown";
 import PositionSizer from "@/components/PositionSizer";
+import PatternsCard from "@/components/PatternsCard";
+import TagCloud from "@/components/TagCloud";
 import TradeFilters, { TradeFilterState, defaultFilters, applyFilters } from "@/components/TradeFilters";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import bkmProfile from "@/assets/bkm-profile.jpeg";
 
 type Tab = 'dashboard' | 'journal' | 'analytics' | 'calendar' | 'tools';
