@@ -300,6 +300,7 @@ export default function Index() {
           {tab === 'dashboard' && (
             <div className="space-y-4 md:space-y-6">
               <StatsOverview stats={stats} />
+              <PatternsCard trades={trades} />
               <EquityCurve trades={trades} />
               <DrawdownChart trades={trades} />
               <div>
