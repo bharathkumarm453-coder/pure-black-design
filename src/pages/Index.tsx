@@ -394,6 +394,36 @@ export default function Index() {
       )}
 
       <AddTradeModal open={modalOpen} onClose={() => { setModalOpen(false); setEditTrade(null); }} onSave={handleAdd} editTrade={editTrade} />
+
+      <AlertDialog open={!!pendingDeleteId} onOpenChange={(open) => { if (!open) setPendingDeleteId(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this trade?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {pendingDeleteTrade ? (
+                <>
+                  <span className="font-semibold text-foreground">{pendingDeleteTrade.symbol}</span>{' '}
+                  <span className="tabular-nums">({pendingDeleteTrade.direction})</span> on{' '}
+                  <span className="tabular-nums">{pendingDeleteTrade.exitDate}</span> ·{' '}
+                  <span className={`tabular-nums font-semibold ${getPnL(pendingDeleteTrade) >= 0 ? 'text-profit' : 'text-loss'}`}>
+                    {getPnL(pendingDeleteTrade) >= 0 ? '+' : ''}${getPnL(pendingDeleteTrade).toFixed(2)}
+                  </span>
+                  <br />This action cannot be undone.
+                </>
+              ) : 'This action cannot be undone.'}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-loss text-background hover:bg-loss/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
