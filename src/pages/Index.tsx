@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useTheme } from "next-themes";
 import { Plus, Download, Upload, BarChart3, BookOpen, Activity, CalendarDays, Sun, Moon, MoreHorizontal, Calculator, LogOut } from "lucide-react";
-import { Trade, calculateStats, exportTradesToCSV, importTradesFromCSV, getRiskReward } from "@/lib/trades";
+import { Trade, calculateStats, exportTradesToCSV, importTradesFromCSV, getRiskReward, getPnL } from "@/lib/trades";
 import { useTrades } from "@/hooks/useTrades";
 import { useAuth } from "@/hooks/useAuth";
 import StatsOverview from "@/components/StatsOverview";
@@ -13,10 +13,16 @@ import AddTradeModal from "@/components/AddTradeModal";
 import CalendarHeatMap from "@/components/CalendarHeatMap";
 import PerformanceBreakdown from "@/components/PerformanceBreakdown";
 import PositionSizer from "@/components/PositionSizer";
+import PatternsCard from "@/components/PatternsCard";
+import TagCloud from "@/components/TagCloud";
 import TradeFilters, { TradeFilterState, defaultFilters, applyFilters } from "@/components/TradeFilters";
 import { toast } from "sonner";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import bkmProfile from "@/assets/bkm-profile.jpeg";
 
 type Tab = 'dashboard' | 'journal' | 'analytics' | 'calendar' | 'tools';
@@ -82,12 +88,14 @@ export default function Index() {
   const [tab, setTab] = useState<Tab>('dashboard');
   const [modalOpen, setModalOpen] = useState(false);
   const [editTrade, setEditTrade] = useState<Trade | null>(null);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const [journalFilters, setJournalFilters] = useState<TradeFilterState>(defaultFilters);
   const filteredTrades = applyFilters(trades, journalFilters);
   const isMobile = useIsMobile();
 
   const stats = calculateStats(trades);
+  const pendingDeleteTrade = pendingDeleteId ? trades.find(t => t.id === pendingDeleteId) ?? null : null;
 
   const handleAdd = async (trade: Omit<Trade, 'id'>) => {
     try {
@@ -99,7 +107,11 @@ export default function Index() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = (id: string) => setPendingDeleteId(id);
+  const confirmDelete = async () => {
+    if (!pendingDeleteId) return;
+    const id = pendingDeleteId;
+    setPendingDeleteId(null);
     try { await deleteTrade(id); toast.success('Trade deleted'); }
     catch (err) { toast.error(err instanceof Error ? err.message : 'Delete failed'); }
   };
@@ -288,6 +300,7 @@ export default function Index() {
           {tab === 'dashboard' && (
             <div className="space-y-4 md:space-y-6">
               <StatsOverview stats={stats} />
+              <PatternsCard trades={trades} />
               <EquityCurve trades={trades} />
               <DrawdownChart trades={trades} />
               <div>
@@ -331,6 +344,7 @@ export default function Index() {
                 ))}
               </div>
               <PerformanceBreakdown trades={trades} />
+              <TagCloud trades={trades} />
             </div>
           )}
           {tab === 'calendar' && (
@@ -380,6 +394,36 @@ export default function Index() {
       )}
 
       <AddTradeModal open={modalOpen} onClose={() => { setModalOpen(false); setEditTrade(null); }} onSave={handleAdd} editTrade={editTrade} />
+
+      <AlertDialog open={!!pendingDeleteId} onOpenChange={(open) => { if (!open) setPendingDeleteId(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this trade?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {pendingDeleteTrade ? (
+                <>
+                  <span className="font-semibold text-foreground">{pendingDeleteTrade.symbol}</span>{' '}
+                  <span className="tabular-nums">({pendingDeleteTrade.direction})</span> on{' '}
+                  <span className="tabular-nums">{pendingDeleteTrade.exitDate}</span> ·{' '}
+                  <span className={`tabular-nums font-semibold ${getPnL(pendingDeleteTrade) >= 0 ? 'text-profit' : 'text-loss'}`}>
+                    {getPnL(pendingDeleteTrade) >= 0 ? '+' : ''}${getPnL(pendingDeleteTrade).toFixed(2)}
+                  </span>
+                  <br />This action cannot be undone.
+                </>
+              ) : 'This action cannot be undone.'}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-loss text-background hover:bg-loss/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

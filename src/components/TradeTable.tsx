@@ -176,7 +176,7 @@ export default function TradeTable({ trades, onDelete, onEdit }: TradeTableProps
                       onClick={() => setDetailTrade(trade)}
                       className="border-b border-border/40 hover:bg-muted/40 transition-colors duration-300 group cursor-pointer"
                     >
-                      <td className="px-5 py-4 font-mono text-xs text-muted-foreground">{trade.exitDate}</td>
+                      <td className="px-5 py-4 tabular-nums text-xs text-muted-foreground">{trade.exitDate}</td>
                       <td className="px-5 py-4 font-semibold tracking-tight">{trade.symbol}</td>
                       <td className="px-5 py-4">
                         <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold ${
@@ -186,14 +186,14 @@ export default function TradeTable({ trades, onDelete, onEdit }: TradeTableProps
                           {trade.direction}
                         </span>
                       </td>
-                      <td className="px-5 py-4 font-mono text-sm">${trade.entryPrice.toFixed(2)}</td>
-                      <td className="px-5 py-4 font-mono text-sm text-muted-foreground">{trade.stopLoss ? `$${trade.stopLoss.toFixed(2)}` : '—'}</td>
-                      <td className="px-5 py-4 font-mono text-sm">${trade.exitPrice.toFixed(2)}</td>
-                      <td className="px-5 py-4 font-mono text-sm">{trade.quantity}</td>
-                      <td className={`px-5 py-4 font-mono text-sm font-semibold ${isWin ? 'text-profit' : 'text-loss'}`}>
+                      <td className="px-5 py-4 tabular-nums text-sm">${trade.entryPrice.toFixed(2)}</td>
+                      <td className="px-5 py-4 tabular-nums text-sm text-muted-foreground">{trade.stopLoss ? `$${trade.stopLoss.toFixed(2)}` : '—'}</td>
+                      <td className="px-5 py-4 tabular-nums text-sm">${trade.exitPrice.toFixed(2)}</td>
+                      <td className="px-5 py-4 tabular-nums text-sm">{trade.quantity}</td>
+                      <td className={`px-5 py-4 tabular-nums text-sm font-semibold ${isWin ? 'text-profit' : 'text-loss'}`}>
                         {isWin ? '+' : ''}{pnl.toFixed(2)}
                       </td>
-                      <td className={`px-5 py-4 font-mono text-xs font-medium ${rr !== null ? (rr >= 0 ? 'text-profit' : 'text-loss') : 'text-muted-foreground'}`}>
+                      <td className={`px-5 py-4 tabular-nums text-xs font-medium ${rr !== null ? (rr >= 0 ? 'text-profit' : 'text-loss') : 'text-muted-foreground'}`}>
                         {rr !== null ? `${rr.toFixed(1)}R` : '—'}
                       </td>
                       <td className="px-5 py-4 text-xs text-muted-foreground">{trade.setup}</td>

@@ -163,21 +163,21 @@ export default function PerformanceBreakdown({ trades }: { trades: Trade[] }) {
                   className="border-b border-border/40 hover:bg-muted/40 transition-colors duration-300"
                 >
                   <td className="px-5 py-4 font-semibold tracking-tight">{row.name}</td>
-                  <td className="px-5 py-4 font-mono text-xs text-muted-foreground">{row.trades}</td>
-                  <td className="px-5 py-4 font-mono text-xs text-muted-foreground">{row.wins}</td>
+                  <td className="px-5 py-4 tabular-nums text-xs text-muted-foreground">{row.trades}</td>
+                  <td className="px-5 py-4 tabular-nums text-xs text-muted-foreground">{row.wins}</td>
                   <td className="px-5 py-4">
-                    <span className={`font-mono text-xs font-semibold ${row.winRate >= 50 ? 'text-profit' : 'text-loss'}`}>
+                    <span className={`tabular-nums text-xs font-semibold ${row.winRate >= 50 ? 'text-profit' : 'text-loss'}`}>
                       {row.winRate.toFixed(1)}%
                     </span>
                   </td>
-                  <td className={`px-5 py-4 font-mono text-sm font-semibold ${row.totalPnL >= 0 ? 'text-profit' : 'text-loss'}`}>
+                  <td className={`px-5 py-4 tabular-nums text-sm font-semibold ${row.totalPnL >= 0 ? 'text-profit' : 'text-loss'}`}>
                     {row.totalPnL >= 0 ? '+' : ''}{row.totalPnL.toFixed(2)}
                   </td>
-                  <td className={`px-5 py-4 font-mono text-xs ${row.avgPnL >= 0 ? 'text-profit' : 'text-loss'}`}>
+                  <td className={`px-5 py-4 tabular-nums text-xs ${row.avgPnL >= 0 ? 'text-profit' : 'text-loss'}`}>
                     {row.avgPnL >= 0 ? '+' : ''}{row.avgPnL.toFixed(2)}
                   </td>
-                  <td className="px-5 py-4 font-mono text-xs text-profit">{row.avgWin.toFixed(2)}</td>
-                  <td className="px-5 py-4 font-mono text-xs text-loss">{row.avgLoss.toFixed(2)}</td>
+                  <td className="px-5 py-4 tabular-nums text-xs text-profit">{row.avgWin.toFixed(2)}</td>
+                  <td className="px-5 py-4 tabular-nums text-xs text-loss">{row.avgLoss.toFixed(2)}</td>
                 </motion.tr>
               ))}
             </tbody>
