@@ -129,7 +129,23 @@ export default function AddTradeModal({ open, onClose, onSave, editTrade }: AddT
               </div>
 
               <div className="grid grid-cols-2 gap-3 md:gap-4">
-                <div><label className={labelClass}>Quantity</label><input type="number" step="any" className={inputClass} placeholder="100" value={form.quantity} onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))} required /></div>
+                <div>
+                  <label className={labelClass}>Quantity / Lots</label>
+                  <input type="number" step="any" className={inputClass} placeholder="100 (shares) or 0.10 (lots)" value={form.quantity} onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))} required />
+                  <div className="flex gap-1.5 mt-2 flex-wrap">
+                    {[
+                      { label: 'Micro 0.01', val: '0.01' },
+                      { label: 'Mini 0.10', val: '0.10' },
+                      { label: 'Std 1.0', val: '1.00' },
+                      { label: 'XAU 0.10', val: '0.10' },
+                    ].map(p => (
+                      <button key={p.label} type="button" onClick={() => setForm(f => ({ ...f, quantity: p.val }))}
+                        className="px-2 py-1 text-[10px] font-medium rounded-md bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                        {p.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
                 <div><label className={labelClass}>Fees</label><input type="number" step="any" className={inputClass} placeholder="0.00" value={form.fees} onChange={e => setForm(f => ({ ...f, fees: e.target.value }))} /></div>
               </div>
 
