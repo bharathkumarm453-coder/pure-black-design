@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Check, ImagePlus, Trash2 } from "lucide-react";
 import { Trade } from "@/lib/trades";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Input } from "@/components/ui/input";
 
 interface AddTradeModalProps {
   open: boolean;
@@ -133,17 +134,35 @@ export default function AddTradeModal({ open, onClose, onSave, editTrade }: AddT
                   <label className={labelClass}>Quantity / Lots</label>
                   <input type="number" step="any" className={inputClass} placeholder="100 (shares) or 0.10 (lots)" value={form.quantity} onChange={e => setForm(f => ({ ...f, quantity: e.target.value }))} required />
                   <div className="flex gap-1.5 mt-2 flex-wrap">
-                    {[
-                      { label: 'Micro 0.01', val: '0.01' },
-                      { label: 'Mini 0.10', val: '0.10' },
-                      { label: 'Std 1.0', val: '1.00' },
-                      { label: 'XAU 0.10', val: '0.10' },
-                    ].map(p => (
-                      <button key={p.label} type="button" onClick={() => setForm(f => ({ ...f, quantity: p.val }))}
-                        className="px-2 py-1 text-[10px] font-medium rounded-md bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
-                        {p.label}
-                      </button>
-                    ))}
+                  {[
+                    { label: 'Micro 0.01', val: '0.01' },
+                    { label: 'Mini 0.10', val: '0.10' },
+                    { label: 'Std 1.0', val: '1.00' },
+                    { label: 'XAU 0.10', val: '0.10' },
+                  ].map(p => (
+                    <button key={p.label} type="button" onClick={() => setForm(f => ({ ...f, quantity: p.val }))}
+                      className="px-2 py-1 text-[10px] font-medium rounded-md bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors">
+                      {p.label}
+                    </button>
+                  ))}
+                  <div className="flex items-center gap-1">
+                    <Input
+                      type="number"
+                      step="any"
+                      placeholder="Custom"
+                      className="w-20 h-6 px-1.5 py-0 text-[10px] rounded-md bg-muted/60 border-border/40 text-foreground placeholder:text-muted-foreground/50"
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val !== '') setForm(f => ({ ...f, quantity: val }));
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          e.preventDefault();
+                          (e.target as HTMLInputElement).blur();
+                        }
+                      }}
+                    />
+                  </div>
                   </div>
                 </div>
                 <div><label className={labelClass}>Fees</label><input type="number" step="any" className={inputClass} placeholder="0.00" value={form.fees} onChange={e => setForm(f => ({ ...f, fees: e.target.value }))} /></div>
