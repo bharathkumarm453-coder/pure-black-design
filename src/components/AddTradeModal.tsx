@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Plus, Check, ImagePlus, Trash2 } from "lucide-react";
 import { Trade } from "@/lib/trades";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Input } from "@/components/ui/input";
 
 interface AddTradeModalProps {
   open: boolean;
